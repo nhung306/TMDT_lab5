@@ -1,0 +1,121 @@
+﻿
+@{
+    ViewData["Title"] = "About";
+}
+<head runat="server">
+    <title></title>
+    <!DOCTYPE >
+    <html> 
+    <link href="https://maps/documentation/javascript/examples/default.css" rel="stylesheet" />
+    <script src="~/Scripts/bootstrap.min.js"></script>
+
+
+    <script>
+        var map;
+        function initMap() {
+            // The location of Uluru
+            var uluru = { lat: 10.856710, lng: 106.788419 };
+
+            //var uluru = { lat: -25.344, lng: 131.036 };
+            // The map, centered at Uluru
+            map = new google.maps.Map(document.getElementById('map'), { zoom: 4, center: uluru });
+            // The marker, positioned at Uluru
+            var marker = new google.maps.Marker({
+                position: uluru,
+                map: map,
+
+            });
+
+            map.addListener('click', function (e) {
+                placeMarker(e.latLng, map);
+            });
+        }
+
+        function changeWidth() {
+            var x = $("#mapWidth").val();
+            $('#map').css("width", x);
+        }
+        function changeHeight() {
+            var x = $("#mapHeight").val();
+            $('#map').css("height", x);
+        }
+
+
+        var mapcode;
+        var diag;
+        function getmap() {
+            mapcode = new google.maps.Geocoder();
+             var lnt = new google.maps.LatLng(26.45, 82.85);
+            var diagChoice = {
+                zoom: 9,
+                center: lnt,
+                diagId: google.maps.MapTypeId.ROADMAP
+            }
+            diag = new google.maps.Map(document.getElementById('map'), diagChoice);
+
+            var completeaddress = document.getElementById('txt_location').value;
+            mapcode.geocode({ 'address': completeaddress }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    diag.setCenter(results[0].geometry.location);
+                    var hint = new google.maps.Marker({
+                        diag: diag,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    alert('Location Not Tracked. ' + status);
+                }
+            });
+        }
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+
+
+        function placeMarker(position, map) {
+            var marker = new google.maps.Marker({
+                position: position,
+                map: map
+            });
+            map.panTo(position);
+        }
+
+    </script>
+
+
+    <style>
+        #map {
+            height: 100%;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    </html>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <br />
+        <br />
+        <br />
+        <br />
+        <div>
+            <h1>Nhập địa chỉ của bạn</h1>
+        </div>
+        <div>
+            <input ID="txt_location" type="text" name="FirstName" value="Hutech" runat="server" TextMode="MultiLine" Width="400px" Height="70px"><br>
+        </div>
+        <div>
+            <input type="button" value="Search" onclick="getmap()">
+        </div>
+
+        <div id="map" style="width:100%; height:500px; border: 2px solid #5E5454;"></div>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+        
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA2Zb2vY8-t_9BUYqFFjc9LQiNWUZPLft4&callback=initMap"
+                async defer></script>
+    </form>
+</body>
+
